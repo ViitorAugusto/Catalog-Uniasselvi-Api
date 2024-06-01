@@ -11,6 +11,10 @@ class Product extends Model
         'slug',
         'price',
         'image',
+        'description',
+        'moreDetails',
+        'category',
+        'featured',
     ];
 }
 

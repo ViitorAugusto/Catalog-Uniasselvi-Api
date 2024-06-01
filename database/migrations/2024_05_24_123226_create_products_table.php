@@ -14,6 +14,10 @@ class CreateProductsTable extends Migration
             $table->text('slug');
             $table->decimal('price', 8, 2);
             $table->string('image')->nullable();
+            $table->string('description');
+            $table->string('moreDetails', 5000);
+            $table->string('category');
+            $table->boolean('featured')->default(false);
             $table->timestamps();
         });
     }

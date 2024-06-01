@@ -20,6 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 //nomenclaturas colocadas de forma errada:
-Route::get('/produtos/por-id/{id}', [ProductsController::class, 'getProductById']);
 Route::get('/produtos', [ProductsController::class, 'productsList']);
-Route::post('/produtos/criar', [ProductsController::class, 'store']);
+Route::get('/products/check-title', [ProductsController::class, 'checkTitle']);
+Route::get('/produtos/por-id/{id}', [ProductsController::class, 'getProductById']);
+Route::post('/produtos/criar', [ProductsController::class, 'createProduct']);
+
