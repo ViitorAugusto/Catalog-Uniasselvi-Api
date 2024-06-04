@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ProductsController extends Controller
@@ -79,5 +80,27 @@ class ProductsController extends Controller
         }
 
         return response()->json(['message' => 'Produto criado com sucesso!', 'produto' => $product]);
+    }
+    public function deleteProduct($id)
+    {
+        $product = Product::with('images')->find($id);
+
+        if (!$product) {
+            return response()->json(["message" => "Produto não encontrado"], 404);
+        }
+
+        // Excluir as imagens associadas
+        foreach ($product->images as $image) {
+            Storage::disk('public')->delete($image->path);
+            $image->delete();
+        }
+
+        // Excluir a imagem principal
+        Storage::disk('public')->delete($product->image);
+
+        // Excluir o produto
+        $product->delete();
+
+        return response()->json(["message" => "Produto excluído com sucesso"]);
     }
 }
