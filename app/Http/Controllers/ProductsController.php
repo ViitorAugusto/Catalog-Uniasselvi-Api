@@ -16,6 +16,12 @@ class ProductsController extends Controller
         return response()->json($products);
     }
 
+    public function showBySlug($slug)
+    {
+        $product = Product::where('slug', $slug)->firstOrFail();
+        return response()->json($product);
+    }
+
     public function getProductById($id)
     {
         if (!$id) {
