@@ -12,7 +12,7 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->string('title');
             $table->text('slug');
-            $table->decimal('price', 8, 2);
+            $table->integer('price');
             $table->string('image')->nullable();
             $table->string('description');
             $table->string('moreDetails', 5000);

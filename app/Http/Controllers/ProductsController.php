@@ -18,7 +18,8 @@ class ProductsController extends Controller
 
     public function showBySlug($slug)
     {
-        $product = Product::where('slug', $slug)->firstOrFail();
+        $product = Product::with('images')
+            ->where('slug', $slug)->firstOrFail();
         return response()->json($product);
     }
 
@@ -44,7 +45,7 @@ class ProductsController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:products',
-            'price' => 'required|numeric',
+            'price' => 'required|integer',
             'images' => 'required|array|max:4',
             'images.*' => 'image|max:2048',
             'mainImage' => 'required|image|max:2048',
