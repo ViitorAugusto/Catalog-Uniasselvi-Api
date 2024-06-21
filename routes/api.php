@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,13 +16,27 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+
+
+//cadastro
+Route::post('/register', [UserController::class, 'register']);
+
+//login
+Route::post('/login', [UserController::class, 'login']);
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    //logout
+    Route::post('/logout', [UserController::class, 'logout']);
+
+    //produtos
+    Route::post('/products/new-product', [ProductsController::class, 'createProduct']);
+    Route::delete('/products/{id}', [ProductsController::class, 'deleteProduct']);
 });
 
+
 //nomenclaturas colocadas de forma errada:
-Route::get('/produtos', [ProductsController::class, 'productsList']);
-Route::delete('/produtos/{id}', [ProductsController::class, 'deleteProduct']);
+Route::get('/products', [ProductsController::class, 'productsList']);
 Route::get('/products/check-title', [ProductsController::class, 'checkTitle']);
-Route::get('/produtos/por-slug/{slug}', [ProductsController::class, 'showBySlug']);
-Route::post('/produtos/criar', [ProductsController::class, 'createProduct']);
+Route::get('/products/{slug}', [ProductsController::class, 'showBySlug']);
+
+
