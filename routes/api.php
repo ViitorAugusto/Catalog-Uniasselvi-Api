@@ -24,9 +24,13 @@ Route::post('/register', [UserController::class, 'register']);
 //login
 Route::post('/login', [UserController::class, 'login']);
 
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('/user', [UserController::class, 'getUser']);
     //logout
     Route::post('/logout', [UserController::class, 'logout']);
+
+    //
 
     //produtos
     Route::post('/products/new-product', [ProductsController::class, 'createProduct']);

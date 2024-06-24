@@ -10,6 +10,20 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
 {
+    public function getUser(Request $request)
+    {
+
+        info($request->user());
+        return response()->json($request->user());
+    }
+    // public function getUser(Request $request)
+    // {
+    //     $user = $request->user();
+    //     if (!$user) return response()->json("sem user");
+    //     if ($user->is_admin) return response()->json($request->user(), 'User');
+    //     else return response()->json($request->user(), 'Admin');
+    // }
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -64,7 +78,7 @@ class UserController extends Controller
         // Verificar se o usuário está autenticado e se há um token atual
         if ($request->user() && $request->user()->currentAccessToken()) {
             // Deletar o token atual
-            if($request->user()->currentAccessToken()->delete()){
+            if ($request->user()->currentAccessToken()->delete()) {
                 return response()->json([
                     'success' => true
                 ]);
@@ -74,8 +88,6 @@ class UserController extends Controller
                     'message' => 'token inválido'
                 ], 401);
             }
-
-            
         } else {
             // Retornar um erro de não autorizado se não houver token presente
             return response()->json([
@@ -84,10 +96,11 @@ class UserController extends Controller
         }
     }
 
-    public function validateUserAdmin(Request $request){
+    public function validateUserAdmin(Request $request)
+    {
         $user = $request->user();
         info($user);
-        if(!$user->is_admin){
+        if (!$user->is_admin) {
             $errorCode = config('errors.codes.AUTH_UNAUTHORIZED');
             return response([
                 'error' => 'AUTH_UNAUTHORIZED',
