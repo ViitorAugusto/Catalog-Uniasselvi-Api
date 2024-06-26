@@ -20,7 +20,7 @@ class ProductsController extends Controller
     public function showBySlug($slug)
     {
         $product = Product::with('images')
-            ->where('slug', $slug)->firstOrFail();
+        ->where('slug', $slug)->firstOrFail();
         return response()->json($product);
     }
 
@@ -49,9 +49,9 @@ class ProductsController extends Controller
             'title' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:products',
             'price' => 'required|integer',
-            // 'images' => 'required|array|max:4',
-            // 'images.*' => 'image|max:2048',
-            // 'mainImage' => 'required|image|max:2048',
+             'images' => 'required|array|max:4',
+             'images.*' => 'image|max:2048',
+             'mainImage' => 'required|image|max:2048',
             'description' => 'required|string|max:500',
             'moreDetails' => 'required|string|max:5000',
             'category' => 'required|string|max:255',
@@ -69,21 +69,21 @@ class ProductsController extends Controller
         }
 
         // Armazenar as imagens
-        // $imagePaths = [];
-        // if ($request->hasFile('images')) {
-        //     foreach ($request->file('images') as $image) {
-        //         $imagePaths[] = $image->store('images', 'public');
-        //     }
-        // }
+        $imagePaths = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imagePaths[] = $image->store('images', 'public');
+            }
+        }
 
         // Armazenar a imagem principal
-        // $mainImagePath = $request->file('mainImage')->store('images', 'public');
+        $mainImagePath = $request->file('mainImage')->store('images', 'public');
 
         $product = Product::create([
             'title' => $request->title,
             'slug' => $request->slug,
             'price' => $request->price,
-            // 'image' => $mainImagePath, // Usando a imagem principal
+            'image' => $mainImagePath, // Usando a imagem principal
             'description' => $request->description,
             'moreDetails' => $request->moreDetails,
             'category' => $request->category,
@@ -91,9 +91,9 @@ class ProductsController extends Controller
         ]);
 
         // Armazenar as imagens adicionais
-        // foreach ($imagePaths as $path) {
-        //     $product->images()->create(['path' => $path]);
-        // }
+        foreach ($imagePaths as $path) {
+            $product->images()->create(['path' => $path]);
+        }
 
         return response()->json(['message' => 'Produto criado com sucesso!', 'produto' => $product]);
     }

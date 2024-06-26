@@ -23,7 +23,7 @@ Route::post('/register', [UserController::class, 'register']);
 
 //login
 Route::post('/login', [UserController::class, 'login']);
-
+Route::get('/user/email/{email}', [UserController::class, 'checkEmail']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/user', [UserController::class, 'getUser']);
@@ -39,8 +39,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
 
 //nomenclaturas colocadas de forma errada:
-Route::get('/products', [ProductsController::class, 'productsList']);
-Route::get('/products/check-title', [ProductsController::class, 'checkTitle']);
-Route::get('/products/{slug}', [ProductsController::class, 'showBySlug']);
-
-
+    Route::get('/products', [ProductsController::class, 'productsList']);
+    Route::get('/products/check-title', [ProductsController::class, 'checkTitle']);
+    Route::get('/product/slug/{slug}', [ProductsController::class, 'showBySlug']);

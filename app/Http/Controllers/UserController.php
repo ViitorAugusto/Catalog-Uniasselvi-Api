@@ -12,17 +12,39 @@ class UserController extends Controller
 {
     public function getUser(Request $request)
     {
-
         info($request->user());
         return response()->json($request->user());
     }
-    // public function getUser(Request $request)
-    // {
-    //     $user = $request->user();
-    //     if (!$user) return response()->json("sem user");
-    //     if ($user->is_admin) return response()->json($request->user(), 'User');
-    //     else return response()->json($request->user(), 'Admin');
-    // }
+
+    public function checkEmail($email)
+    {
+        if (!$email) {
+            $errorCode = config('errors.codes.VALIDATION_REQUIRED_FIELD');
+            return response([
+                'error' => 'VALIDATION_REQUIRED_FIELD',
+                'code' => $errorCode,
+                'message' => config('errors.messages.' . $errorCode),
+                'field' => 'email'
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errorCode = config('errors.codes.VALIDATION_INVALID_FIELD');
+            return response([
+                'error' => 'VALIDATION_INVALID_FIELD',
+                'code' => $errorCode,
+                'message' => config('errors.messages.' . $errorCode),
+                'field' => 'email'
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $user = User::where('email', $email)->first();
+        if ($user) {
+            return response()->json(['message' => 'E-mail já cadastrado', 'exists' => true], 400);
+        } else {
+            return response()->json(['message' => 'E-mail disponível', 'exists' => false], 200);
+        }
+    }
 
     public function register(Request $request)
     {
