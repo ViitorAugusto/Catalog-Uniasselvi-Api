@@ -11,16 +11,27 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProductsController extends Controller
 {
-    public function productsList()
+    //http://127.0.0.1:8000/api/products?page=1&category=games
+    public function productsList(Request $request)
     {
-        $products = Product::with('images')->get();
+        //$perPage = $request->query('perPage') ?? 10;
+        $category = $request->query('category');
+        $query = Product::with('images');
+        $search = $request->query('search');
+        if ($search) {
+            $query->where('title', 'LIKE', "%" . $search . "%");
+        }
+        if ($category) {
+            $query->where('category', $category);
+        }
+        $products = $query->paginate(10);
         return response()->json($products);
     }
 
     public function showBySlug($slug)
     {
         $product = Product::with('images')
-        ->where('slug', $slug)->firstOrFail();
+            ->where('slug', $slug)->firstOrFail();
         return response()->json($product);
     }
 
@@ -49,9 +60,9 @@ class ProductsController extends Controller
             'title' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:products',
             'price' => 'required|integer',
-             'images' => 'required|array|max:4',
-             'images.*' => 'image|max:2048',
-             'mainImage' => 'required|image|max:2048',
+            'images' => 'required|array|max:4',
+            'images.*' => 'image|max:2048',
+            'mainImage' => 'required|image|max:2048',
             'description' => 'required|string|max:500',
             'moreDetails' => 'required|string|max:5000',
             'category' => 'required|string|max:255',
@@ -64,7 +75,7 @@ class ProductsController extends Controller
 
         $userController = new UserController;
         $responseValidaAdmin = $userController->validateUserAdmin($request);
-        if($responseValidaAdmin){
+        if ($responseValidaAdmin) {
             return $responseValidaAdmin;
         }
 
@@ -97,14 +108,14 @@ class ProductsController extends Controller
 
         return response()->json(['message' => 'Produto criado com sucesso!', 'produto' => $product]);
     }
-    public function deleteProduct(Request $request , $id)
+    public function deleteProduct(Request $request, $id)
     {
         $userController = new UserController;
         $responseValidaAdmin = $userController->validateUserAdmin($request);
-        if($responseValidaAdmin){
+        if ($responseValidaAdmin) {
             return $responseValidaAdmin;
         }
-        $product = Product::with('images')->where('id',$id)->first();
+        $product = Product::with('images')->where('id', $id)->first();
 
         if (!$product) {
             return response()->json(["message" => "Produto não encontrado"], 404);
@@ -124,6 +135,4 @@ class ProductsController extends Controller
 
         return response()->json(["message" => "Produto excluído com sucesso"]);
     }
-
-
 }
